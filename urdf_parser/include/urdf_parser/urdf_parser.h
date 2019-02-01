@@ -44,6 +44,10 @@
 #include <urdf_model/color.h>
 #include <urdf_world/types.h>
 
+
+#include <urdf_sensor/sensor.h>
+#include <urdf_model_state/model_state.h>
+
 #include "exportdecl.h"
 
 namespace urdf_export_helpers {
@@ -63,6 +67,14 @@ namespace urdf{
   URDFDOM_DLLAPI TiXmlDocument*  exportURDF(ModelInterfaceSharedPtr &model);
   URDFDOM_DLLAPI TiXmlDocument*  exportURDF(const ModelInterface &model);
   URDFDOM_DLLAPI bool parsePose(Pose&, TiXmlElement*);
+
+  URDFDOM_DLLAPI bool parseCamera(Camera &camera, TiXmlElement* config);
+  URDFDOM_DLLAPI bool parseRay(Ray &ray, TiXmlElement* config);
+  URDFDOM_DLLAPI VisualSensorSharedPtr parseVisualSensor(TiXmlElement *g);
+  URDFDOM_DLLAPI bool parseSensor(Sensor &sensor, TiXmlElement* config);
+
+  URDFDOM_DLLAPI bool parseModelState(ModelState &ms, TiXmlElement* config);
+
 }
 
 #endif
