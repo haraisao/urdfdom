@@ -40,12 +40,21 @@
 #include <sstream>
 #include <algorithm>
 #include <console_bridge/console.h>
+#ifndef WIN32
 #include <tinyxml.h>
+#else
+#include <tinyxml2.h>
+#define TiXmlDocument tinyxml2::XMLDocument
+#define TiXmlElement tinyxml2::XMLElement
+#endif
 #include <urdf_parser/urdf_parser.h>
 
 namespace urdf_export_helpers {
-
+#ifndef WIN32
 std::string values2str(unsigned int count, const double *values, double (*conv)(double))
+#else
+const char * values2str(unsigned int count, const double *values, double (*conv)(double))
+#endif
 {
     std::stringstream ss;
     for (unsigned int i = 0 ; i < count ; i++)
@@ -54,9 +63,17 @@ std::string values2str(unsigned int count, const double *values, double (*conv)(
             ss << " ";
         ss << (conv ? conv(values[i]) : values[i]);
     }
+#ifndef WIN32
     return ss.str();
+#else
+    return ss.str().c_str();
+#endif
 }
+#ifndef WIN32
 std::string values2str(urdf::Vector3 vec)
+#else
+const char* values2str(urdf::Vector3 vec)
+#endif
 {
     double xyz[3];
     xyz[0] = vec.x;
@@ -64,13 +81,21 @@ std::string values2str(urdf::Vector3 vec)
     xyz[2] = vec.z;
     return values2str(3, xyz);
 }
+#ifndef WIN32
 std::string values2str(urdf::Rotation rot)
+#else
+const char * values2str(urdf::Rotation rot)
+#endif
 {
     double rpy[3];
     rot.getRPY(rpy[0], rpy[1], rpy[2]);
     return values2str(3, rpy);
 }
+#ifndef WIN32
 std::string values2str(urdf::Color c)
+#else
+const char * values2str(urdf::Color c)
+#endif
 {
     double rgba[4];
     rgba[0] = c.r;
@@ -79,7 +104,11 @@ std::string values2str(urdf::Color c)
     rgba[3] = c.a;
     return values2str(4, rgba);
 }
+#ifndef WIN32
 std::string values2str(double d)
+#else
+const char * values2str(double d)
+#endif
 {
     return values2str(1, &d);
 }
@@ -121,11 +150,20 @@ bool parsePose(Pose &pose, TiXmlElement* xml)
 
 bool exportPose(Pose &pose, TiXmlElement* xml)
 {
+#ifndef WIN32
   TiXmlElement *origin = new TiXmlElement("origin");
+#else
+  tinyxml2::XMLElement *origin = xml->GetDocument()->NewElement("origin");
+#endif
   std::string pose_xyz_str = urdf_export_helpers::values2str(pose.position);
   std::string pose_rpy_str = urdf_export_helpers::values2str(pose.rotation);
+#ifndef WIN32
   origin->SetAttribute("xyz", pose_xyz_str);
   origin->SetAttribute("rpy", pose_rpy_str);
+#else
+  origin->SetAttribute("xyz", pose_xyz_str.c_str());
+  origin->SetAttribute("rpy", pose_rpy_str.c_str());
+#endif
   xml->LinkEndChild(origin);
   return true;
 }

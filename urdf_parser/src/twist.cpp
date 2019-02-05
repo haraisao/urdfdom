@@ -39,7 +39,13 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#ifndef WIN32
 #include <tinyxml.h>
+#else
+#include <tinyxml2.h>
+#define TiXmlDocument tinyxml2::XMLDocument
+#define TiXmlElement tinyxml2::XMLElement
+#endif
 #include <console_bridge/console.h>
 
 namespace urdf{

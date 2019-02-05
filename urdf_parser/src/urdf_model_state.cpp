@@ -43,7 +43,7 @@
 #include <stdexcept>
 #include <string>
 #include <algorithm>
-#include <tinyxml.h>
+//#include <tinyxml.h>
 #include <console_bridge/console.h>
 
 #include <urdf_parser/urdf_parser.h>

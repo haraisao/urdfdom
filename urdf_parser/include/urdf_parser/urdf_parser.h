@@ -39,7 +39,13 @@
 
 #include <string>
 #include <map>
+#ifndef WIN32
 #include <tinyxml.h>
+#else
+#include <tinyxml2.h>
+#define TiXmlDocument tinyxml2::XMLDocument
+#define TiXmlElement tinyxml2::XMLElement
+#endif
 #include <urdf_model/model.h>
 #include <urdf_model/color.h>
 #include <urdf_world/types.h>
@@ -48,15 +54,22 @@
 #include <urdf_sensor/sensor.h>
 #include <urdf_model_state/model_state.h>
 
-#include "exportdecl.h"
+#include "urdf_parser/exportdecl.h"
 
 namespace urdf_export_helpers {
-
+#ifndef WIN32
 URDFDOM_DLLAPI std::string values2str(unsigned int count, const double *values, double (*conv)(double) = NULL);
 URDFDOM_DLLAPI std::string values2str(urdf::Vector3 vec);
 URDFDOM_DLLAPI std::string values2str(urdf::Rotation rot);
 URDFDOM_DLLAPI std::string values2str(urdf::Color c);
 URDFDOM_DLLAPI std::string values2str(double d);
+#else
+URDFDOM_DLLAPI const char * values2str(unsigned int count, const double *values, double (*conv)(double) = NULL);
+URDFDOM_DLLAPI const char * values2str(urdf::Vector3 vec);
+URDFDOM_DLLAPI const char * values2str(urdf::Rotation rot);
+URDFDOM_DLLAPI const char * values2str(urdf::Color c);
+URDFDOM_DLLAPI const char * values2str(double d);
+#endif
 
 }
 

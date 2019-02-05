@@ -95,7 +95,11 @@ ModelInterfaceSharedPtr  parseURDF(const std::string &xml_string)
   xml_doc.Parse(xml_string.c_str());
   if (xml_doc.Error())
   {
+  #ifndef WIN32
     CONSOLE_BRIDGE_logError(xml_doc.ErrorDesc());
+  #else
+    CONSOLE_BRIDGE_logError(xml_doc.ErrorStr());
+  #endif
     xml_doc.ClearError();
     model.reset();
     return model;
@@ -258,9 +262,13 @@ bool exportJoint(Joint &joint, TiXmlElement *config);
 TiXmlDocument*  exportURDF(const ModelInterface &model)
 {
   TiXmlDocument *doc = new TiXmlDocument();
-
+#ifndef WIN32
   TiXmlElement *robot = new TiXmlElement("robot");
   robot->SetAttribute("name", model.name_);
+#else
+  TiXmlElement *robot = doc->NewElement("robot");
+  robot->SetAttribute("name", model.name_.c_str());
+#endif
   doc->LinkEndChild(robot);
 
 

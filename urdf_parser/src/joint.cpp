@@ -40,7 +40,13 @@
 #include <string>
 #include <urdf_model/joint.h>
 #include <console_bridge/console.h>
+#ifndef WIN32
 #include <tinyxml.h>
+#else
+#include <tinyxml2.h>
+#define TiXmlDocument tinyxml2::XMLDocument
+#define TiXmlElement tinyxml2::XMLElement
+#endif
 #include <urdf_parser/urdf_parser.h>
 
 namespace urdf{
@@ -528,7 +534,11 @@ bool exportPose(Pose &pose, TiXmlElement* xml);
 
 bool exportJointDynamics(JointDynamics &jd, TiXmlElement* xml)
 {
+#ifndef WIN32
   TiXmlElement *dynamics_xml = new TiXmlElement("dynamics");
+#else
+  TiXmlElement *dynamics_xml = xml->GetDocument()->NewElement("dynamics");
+#endif
   dynamics_xml->SetAttribute("damping", urdf_export_helpers::values2str(jd.damping) );
   dynamics_xml->SetAttribute("friction", urdf_export_helpers::values2str(jd.friction) );
   xml->LinkEndChild(dynamics_xml);
@@ -537,7 +547,11 @@ bool exportJointDynamics(JointDynamics &jd, TiXmlElement* xml)
 
 bool exportJointLimits(JointLimits &jl, TiXmlElement* xml)
 {
+#ifndef WIN32
   TiXmlElement *limit_xml = new TiXmlElement("limit");
+#else
+  TiXmlElement *limit_xml = xml->GetDocument()->NewElement("limit");
+#endif
   limit_xml->SetAttribute("effort", urdf_export_helpers::values2str(jl.effort) );
   limit_xml->SetAttribute("velocity", urdf_export_helpers::values2str(jl.velocity) );
   limit_xml->SetAttribute("lower", urdf_export_helpers::values2str(jl.lower) );
@@ -548,7 +562,11 @@ bool exportJointLimits(JointLimits &jl, TiXmlElement* xml)
 
 bool exportJointSafety(JointSafety &js, TiXmlElement* xml)
 {
+#ifndef WIN32
   TiXmlElement *safety_xml = new TiXmlElement("safety_controller");
+#else
+  TiXmlElement *safety_xml = xml->GetDocument()->NewElement("safety_controller");
+#endif
   safety_xml->SetAttribute("k_position", urdf_export_helpers::values2str(js.k_position) );
   safety_xml->SetAttribute("k_velocity", urdf_export_helpers::values2str(js.k_velocity) );
   safety_xml->SetAttribute("soft_lower_limit", urdf_export_helpers::values2str(js.soft_lower_limit) );
@@ -561,7 +579,11 @@ bool exportJointCalibration(JointCalibration &jc, TiXmlElement* xml)
 {
   if (jc.falling || jc.rising)
   {
+#ifndef WIN32
     TiXmlElement *calibration_xml = new TiXmlElement("calibration");
+#else
+    TiXmlElement *calibration_xml = xml->GetDocument()->NewElement("calibration");
+#endif
     if (jc.falling)
       calibration_xml->SetAttribute("falling", urdf_export_helpers::values2str(*jc.falling) );
     if (jc.rising)
@@ -576,10 +598,18 @@ bool exportJointMimic(JointMimic &jm, TiXmlElement* xml)
 {
   if (!jm.joint_name.empty())
   {
+#ifndef WIN32
     TiXmlElement *mimic_xml = new TiXmlElement("mimic");
+#else
+    TiXmlElement *mimic_xml = xml->GetDocument()->NewElement("mimic");
+#endif
     mimic_xml->SetAttribute("offset", urdf_export_helpers::values2str(jm.offset) );
     mimic_xml->SetAttribute("multiplier", urdf_export_helpers::values2str(jm.multiplier) );
+#ifndef WIN32
     mimic_xml->SetAttribute("joint", jm.joint_name );
+#else
+    mimic_xml->SetAttribute("joint", jm.joint_name.c_str() );
+#endif
     xml->LinkEndChild(mimic_xml);
   }
   return true;
@@ -587,8 +617,13 @@ bool exportJointMimic(JointMimic &jm, TiXmlElement* xml)
 
 bool exportJoint(Joint &joint, TiXmlElement* xml)
 {
+#ifndef WIN32
   TiXmlElement * joint_xml = new TiXmlElement("joint");
   joint_xml->SetAttribute("name", joint.name);
+#else
+  TiXmlElement * joint_xml = xml->GetDocument()->NewElement("joint");
+  joint_xml->SetAttribute("name", joint.name.c_str());
+#endif
   if (joint.type == urdf::Joint::PLANAR)
     joint_xml->SetAttribute("type", "planar");
   else if (joint.type == urdf::Joint::FLOATING)
@@ -608,18 +643,32 @@ bool exportJoint(Joint &joint, TiXmlElement* xml)
   exportPose(joint.parent_to_joint_origin_transform, joint_xml);
 
   // axis
+  #ifndef WIN32
   TiXmlElement * axis_xml = new TiXmlElement("axis");
+  #else
+  TiXmlElement * axis_xml = xml->GetDocument()->NewElement("axis");
+  #endif
   axis_xml->SetAttribute("xyz", urdf_export_helpers::values2str(joint.axis));
   joint_xml->LinkEndChild(axis_xml);
 
   // parent 
+  #ifndef WIN32
   TiXmlElement * parent_xml = new TiXmlElement("parent");
   parent_xml->SetAttribute("link", joint.parent_link_name);
+  #else
+  TiXmlElement * parent_xml = xml->GetDocument()->NewElement("parent");
+  parent_xml->SetAttribute("link", joint.parent_link_name.c_str());
+  #endif
   joint_xml->LinkEndChild(parent_xml);
 
   // child
+  #ifndef WIN32
   TiXmlElement * child_xml = new TiXmlElement("child");
   child_xml->SetAttribute("link", joint.child_link_name);
+  #else
+  TiXmlElement * child_xml = xml->GetDocument()->NewElement("child");
+  child_xml->SetAttribute("link", joint.child_link_name.c_str());
+  #endif
   joint_xml->LinkEndChild(child_xml);
 
   if (joint.dynamics)
