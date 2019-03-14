@@ -54,9 +54,9 @@ link_directories(${console_bridge_LIBRARY_DIRS})
 
 #In Visual Studio a special postfix for 
 #libraries compiled in debug is used
-if(MSVC)
-set(CMAKE_DEBUG_POSTFIX "d")
-endif(MSVC)
+#if(MSVC)
+# set(CMAKE_DEBUG_POSTFIX "d")
+#endif(MSVC)
 
 # Control where libraries and executables are placed during the build
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
