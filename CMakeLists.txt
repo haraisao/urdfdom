@@ -33,6 +33,7 @@ endif (MSVC OR MSVC90 OR MSVC10)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if(WIN32)
+  find_package(catkin REQUIRED)
   find_package(TinyXML2 REQUIRED)
   include_directories(SYSTEM ${TinyXML2_INCLUDE_DIRS})
 else()

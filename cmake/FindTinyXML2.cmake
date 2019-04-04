@@ -40,7 +40,7 @@
 #  target_link_libraries(my_target ${TinyXML2_LIBRARIES})
 # 
 ##################################################################################################
-message("=====================")
+
 # Get package location hint from environment variable (if any)
 if(NOT TinyXML2_ROOT_DIR AND DEFINED ENV{TinyXML2_ROOT_DIR})
   set(TinyXML2_ROOT_DIR "$ENV{TinyXML2_ROOT_DIR}" CACHE PATH
@@ -54,8 +54,13 @@ if(TinyXML2_ROOT_DIR)
 endif()
 
 # Find headers and libraries
-find_path(TinyXML2_INCLUDE_DIR NAMES tinyxml2.h PATH_SUFFIXES "tinyxml2" ${TinyXML2_INCLUDE_PATH})
-find_library(TinyXML2_LIBRARY  NAMES tinyxml2   PATH_SUFFIXES "tinyxml2" ${TinyXML2_LIBRARY_PATH})
+if(WIN32)
+  find_path(TinyXML2_INCLUDE_DIR NAMES tinyxml2.h PATH_SUFFIXES "tinyxml2/include" ${TinyXML2_INCLUDE_PATH})
+  find_library(TinyXML2_LIBRARY  NAMES tinyxml2   PATH_SUFFIXES "tinyxml2/lib" ${TinyXML2_LIBRARY_PATH})
+else()
+  find_path(TinyXML2_INCLUDE_DIR NAMES tinyxml2.h PATH_SUFFIXES "tinyxml2" ${TinyXML2_INCLUDE_PATH})
+  find_library(TinyXML2_LIBRARY  NAMES tinyxml2   PATH_SUFFIXES "tinyxml2" ${TinyXML2_LIBRARY_PATH})
+endif()
 
 mark_as_advanced(TinyXML2_INCLUDE_DIR
                  TinyXML2_LIBRARY)
