@@ -78,7 +78,11 @@ set(PKG_NAME ${PROJECT_NAME})
 set(PKG_LIBRARIES urdfdom_sensor urdfdom_model_state urdfdom_model urdfdom_world)
 set(PKG_DEPENDS urdfdom_headers console_bridge)
 set(cmake_conf_file "cmake/urdfdom-config.cmake")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${cmake_conf_file}.in" "${CMAKE_BINARY_DIR}/${cmake_conf_file}" @ONLY)
+if(NOT MSVC)
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${cmake_conf_file}.in" "${CMAKE_BINARY_DIR}/${cmake_conf_file}" @ONLY)
+else()
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${cmake_conf_file}-win32.in" "${CMAKE_BINARY_DIR}/${cmake_conf_file}" @ONLY)
+endif()
 install(FILES ${CMAKE_BINARY_DIR}/${cmake_conf_file}
   DESTINATION ${CMAKE_CONFIG_INSTALL_DIR} COMPONENT cmake)
 
